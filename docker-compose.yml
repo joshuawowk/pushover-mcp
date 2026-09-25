@@ -1,0 +1,11 @@
+services:
+  pushover-mcp:
+    image: ghcr.io/joshuawowk/pushover-mcp:latest
+    container_name: pushover-mcp
+    restart: unless-stopped
+    env_file: [.env]
+    ports:
+      - "8735:8735"
+    logging:
+      driver: json-file
+      options: { max-size: "10m", max-file: "3" }

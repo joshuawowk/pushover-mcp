@@ -1,0 +1,46 @@
+name: Publish (GHCR + MCP Registry)
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Set up Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      - name: Version from tag
+        id: v
+        run: echo "v=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+      - name: Build and push image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: |
+            ghcr.io/joshuawowk/pushover-mcp:${{ steps.v.outputs.v }}
+            ghcr.io/joshuawowk/pushover-mcp:latest
+      - name: Install mcp-publisher
+        run: |
+          curl -L "https://github.com/modelcontextprotocol/registry/releases/latest/download/mcp-publisher_linux_amd64.tar.gz" | tar xz mcp-publisher
+      - name: Sync server.json version to tag
+        run: |
+          tmp=$(mktemp); jq --arg v "${{ steps.v.outputs.v }}" '.version=$v | (.packages[].identifier)="ghcr.io/joshuawowk/pushover-mcp:"+$v' server.json > "$tmp" && mv "$tmp" server.json
+      - name: Publish to MCP Registry (OIDC)
+        run: |
+          ./mcp-publisher login github-oidc
+          ./mcp-publisher publish

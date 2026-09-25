@@ -1,0 +1,20 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.joshuawowk/pushover-mcp",
+  "title": "Pushover Notifications",
+  "description": "Send push notifications to your devices and groups via the Pushover API.",
+  "version": "1.0.0",
+  "repository": { "url": "https://github.com/joshuawowk/pushover-mcp", "source": "github" },
+  "websiteUrl": "https://jwowk.net",
+  "packages": [
+    {
+      "registryType": "oci",
+      "identifier": "ghcr.io/joshuawowk/pushover-mcp:1.0.0",
+      "transport": { "type": "stdio" },
+      "environmentVariables": [
+        { "name": "PUSHOVER_TOKEN", "description": "Pushover application API token", "isRequired": true, "isSecret": true },
+        { "name": "PUSHOVER_USER_KEY", "description": "Default Pushover user or group key", "isRequired": false, "isSecret": true }
+      ]
+    }
+  ]
+}
