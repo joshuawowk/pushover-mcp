@@ -27,4 +27,7 @@ EXPOSE 8735
 HEALTHCHECK --interval=60s --timeout=5s --start-period=10s --retries=3 \
   CMD python -c "import socket,sys; s=socket.create_connection(('127.0.0.1',8735),3); s.close()" || exit 1
 
-ENTRYPOINT ["python", "/app/pushover_mcp.py", "--http", "--host", "0.0.0.0", "--port", "8735"]
+# No-args default is the HTTP server on 8735. Registry/stdio clients override CMD,
+# e.g. `docker run -i <image> --stdio`.
+ENTRYPOINT ["python", "/app/pushover_mcp.py"]
+CMD ["--http", "--host", "0.0.0.0", "--port", "8735"]

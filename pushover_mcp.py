@@ -366,6 +366,7 @@ async def pushover_cancel_retries(
 def main() -> None:
     parser = argparse.ArgumentParser(description="Pushover MCP server")
     parser.add_argument("--http", action="store_true", help="Serve streamable HTTP instead of stdio")
+    parser.add_argument("--stdio", action="store_true", help="Serve over stdio (the default when --http is absent; explicit form for container use)")
     parser.add_argument("--host", default="0.0.0.0", help="HTTP bind host (default 0.0.0.0)")
     parser.add_argument("--port", type=int, default=8735, help="HTTP port (default 8735)")
     parser.add_argument(
@@ -373,12 +374,14 @@ def main() -> None:
         default=os.environ.get("PUSHOVER_MCP_ALLOWED_HOSTS", ""),
         help=(
             "Comma-separated Host values accepted by the DNS-rebinding guard "
-            "(e.g. '192.168.0.164:8735,pushover.jwowk.net'). Use '*' to disable the "
+            "(e.g. '192.0.2.10:8735,pushover.example.com'). Use '*' to disable the "
             "check. Defaults to localhost only, which rejects LAN clients. "
             "Also settable via PUSHOVER_MCP_ALLOWED_HOSTS."
         ),
     )
     args = parser.parse_args()
+    if args.http and args.stdio:
+        parser.error("--http and --stdio are mutually exclusive")
 
     try:
         _token()  # fail fast with a clear message
