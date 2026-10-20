@@ -39,7 +39,7 @@ jobs:
           curl -L "https://github.com/modelcontextprotocol/registry/releases/latest/download/mcp-publisher_linux_amd64.tar.gz" | tar xz mcp-publisher
       - name: Sync server.json version to tag
         run: |
-          tmp=$(mktemp); jq --arg v "${{ steps.v.outputs.v }}" '.version=$v | (.packages[].identifier)="ghcr.io/joshuawowk/pushover-mcp:"+$v' server.json > "$tmp" && mv "$tmp" server.json
+          tmp=$(mktemp); jq --arg v "${{ steps.v.outputs.v }}" '.version=$v | (.packages[]|select(.registryType=="oci")|.identifier)="ghcr.io/joshuawowk/pushover-mcp:"+$v' server.json > "$tmp" && mv "$tmp" server.json
       - name: Publish to MCP Registry (OIDC)
         run: |
           ./mcp-publisher login github-oidc

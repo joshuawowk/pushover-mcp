@@ -3,14 +3,20 @@
   "name": "io.github.joshuawowk/pushover-mcp",
   "title": "Pushover Notifications",
   "description": "Send push notifications to your devices and groups via the Pushover API.",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "repository": { "url": "https://github.com/joshuawowk/pushover-mcp", "source": "github" },
   "websiteUrl": "https://jwowk.net",
   "packages": [
     {
       "registryType": "oci",
-      "identifier": "ghcr.io/joshuawowk/pushover-mcp:1.0.0",
+      "identifier": "ghcr.io/joshuawowk/pushover-mcp:1.0.1",
       "transport": { "type": "stdio" },
+      "runtimeArguments": [
+        { "type": "positional", "value": "-i" }
+      ],
+      "packageArguments": [
+        { "type": "named", "name": "--stdio" }
+      ],
       "environmentVariables": [
         { "name": "PUSHOVER_TOKEN", "description": "Pushover application API token", "isRequired": true, "isSecret": true },
         { "name": "PUSHOVER_USER_KEY", "description": "Default Pushover user or group key", "isRequired": false, "isSecret": true }
